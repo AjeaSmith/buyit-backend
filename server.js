@@ -1,7 +1,7 @@
 const express = require("express");
 const colors = require("colors");
 const dotenv = require("dotenv");
-const path = require("path");
+const cors = require("cors");
 const connectDB = require("./config/db");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
@@ -16,34 +16,24 @@ dotenv.config();
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+// Middleware
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(notFound);
+app.use(errorHandler);
 
 // Routes
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/upload", uploadRoutes);
-
 app.get("/api/config/paypal", (req, res) =>
   res.send(process.env.PAYPAL_CLIENT_ID)
 );
-// const __dirname = path.resolve();
-// app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
-
-// prepare for deployment
-// if (process.env.NODE_ENV === "production") {
-//   app.use(express.static(path.join(__dirname, "./frontend/build")));
-//   app.get("*", (req, res) => {
-//     res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
-//   });
-// }
 app.get("*", (req, res) => {
   res.send("api is running");
 });
-// Middleware
-app.use(notFound);
-app.use(errorHandler);
 
 // Start server
 const PORT = process.env.PORT || 5000;
