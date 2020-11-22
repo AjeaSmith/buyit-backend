@@ -13,15 +13,14 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 const app = express();
 dotenv.config();
+
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 // Middleware
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(notFound);
-app.use(errorHandler);
+app.use(cors());
 
 // Routes
 app.use("/api/products", productRoutes);
@@ -31,9 +30,11 @@ app.use("/api/upload", uploadRoutes);
 app.get("/api/config/paypal", (req, res) =>
   res.send(process.env.PAYPAL_CLIENT_ID)
 );
-app.get("*", (req, res) => {
+app.get("/", (req, res) => {
   res.send("api is running now");
 });
+app.use(notFound);
+app.use(errorHandler);
 
 // Start server
 const PORT = process.env.PORT || 5000;
