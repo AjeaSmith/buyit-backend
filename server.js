@@ -38,6 +38,9 @@ app.get("/api/config/paypal", (req, res) =>
 //     res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
 //   });
 // }
+app.get("*", (req, res) => {
+  res.send("api is running");
+});
 // Middleware
 app.use(notFound);
 app.use(errorHandler);
